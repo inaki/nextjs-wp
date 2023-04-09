@@ -3,6 +3,15 @@ import { Cover } from "../Cover";
 import { Heading } from "../Heading";
 import { Paragraph } from "../Paragraph";
 import { theme } from "theme";
+import { Blocks } from "@/utils/cleanAndTransformBlocks";
+
+type ColorName =
+  | "foreground"
+  | "background"
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "slate";
 
 interface BlockAttributes {
   url?: string;
@@ -10,7 +19,7 @@ interface BlockAttributes {
   content?: string;
   level?: number;
   textAlign?: string;
-  textColor?: string;
+  textColor?: ColorName;
   style?: {
     color?: {
       text?: string;
@@ -26,7 +35,7 @@ export interface Block {
 }
 
 export interface BlockRendererProps {
-  blocks: Block[];
+  blocks: Blocks;
 }
 
 export const BlockRenderer: React.FC<BlockRendererProps> = ({ blocks }) => {

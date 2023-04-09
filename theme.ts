@@ -1,4 +1,13 @@
-export const theme = {
+export interface Theme {
+  foreground: string;
+  background: string;
+  primary: string;
+  secondary: string;
+  tertiary: string;
+  slate: string;
+}
+
+export const theme: Theme = {
   foreground: "#000000",
   background: "#ffffff",
   primary: "#1a4548",

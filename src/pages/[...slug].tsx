@@ -1,18 +1,8 @@
-import { BlockRenderer } from "@/components/BlockRenderer";
-import { Heading } from "@/components/Heading";
-import { cleanAndTransformBlocks } from "@/utils/cleanAndTransformBlocks";
+import { Page } from "@/components/Page";
+import { getPageStaticProps } from "@/utils/getPageStaticProps";
 import { gql } from "@apollo/client";
 import client from "client";
 import { GetStaticPaths } from "next";
-
-const Page: React.FC = ({ title, blocks }) => {
-  return (
-    <div>
-      <Heading content={title} />
-      <BlockRenderer blocks={blocks} />
-    </div>
-  );
-};
 
 export default Page;
 
@@ -30,32 +20,7 @@ interface QueryData {
   data: PagesData;
 }
 
-export const getStaticProps = async (context) => {
-  const uri = `/${context.params.slug.join("/")}/`;
-  const { data } = await client.query({
-    query: gql`
-      query PageQuery($uri: String!) {
-        nodeByUri(uri: $uri) {
-          ... on Page {
-            id
-            title
-            blocks
-          }
-        }
-      }
-    `,
-    variables: {
-      uri,
-    },
-  });
-
-  return {
-    props: {
-      title: data.nodeByUri.title,
-      blocks: cleanAndTransformBlocks(data.nodeByUri.blocks),
-    },
-  };
-};
+export const getStaticProps = getPageStaticProps;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const { data } = await client.query<PagesData>({

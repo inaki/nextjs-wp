@@ -1,9 +1,10 @@
 import { v4 as uuid } from "uuid";
 
-interface Block {
-  id?: string;
-  innerBlocks?: Block[];
-  [key: string]: any;
+export interface Block {
+  id: string;
+  name: string;
+  attributes: BlockAttributes;
+  innerBlocks: Block[];
 }
 
 export type Blocks = Block[];
