@@ -1,16 +1,22 @@
 import Head from "next/head";
-import Image from "next/image";
 import { Inter } from "@next/font/google";
 import styles from "@/styles/Home.module.css";
 import client from "client";
 import { gql } from "@apollo/client";
 import { BlockRenderer } from "@/components/BlockRenderer";
-import { cleanAndTransformBlocks } from "@/utils/cleanAndTransformBlocks";
+import {
+  cleanAndTransformBlocks,
+  Blocks,
+} from "@/utils/cleanAndTransformBlocks";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export default function Home({ blocks }) {
-  console.log("props", blocks);
+interface HomeProps {
+  blocks: Blocks;
+}
+
+const Home: React.FC<HomeProps> = ({ blocks, mainMenuItems }) => {
+  console.log(blocks, mainMenuItems);
   return (
     <>
       <Head>
@@ -20,33 +26,55 @@ export default function Home({ blocks }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div>holas hooas</div>
         <BlockRenderer blocks={blocks} />
       </main>
     </>
   );
-}
+};
+
+export default Home;
 
 export const getStaticProps = async () => {
   const { data } = await client.query({
     query: gql`
-      query NewQuery {
-        pages {
-          nodes {
-            title
-          }
-        }
+      query PageQuery {
         nodeByUri(uri: "/") {
           ... on Page {
             id
             blocks
           }
         }
+        acfOptionsMainMenu {
+          mainMenu {
+            menuItems {
+              items {
+                destination {
+                  ... on Page {
+                    uri
+                  }
+                }
+                label
+              }
+              menuItem {
+                destination {
+                  ... on Page {
+                    uri
+                  }
+                }
+                label
+              }
+            }
+          }
+        }
       }
     `,
   });
+
+  console.log("query", data.acfOptionsMainMenu.mainMenu.menuItems);
+
   return {
     props: {
+      mainMenuItems: data.acfOptionsMainMenu.mainMenu.menuItems,
       blocks: cleanAndTransformBlocks(data.nodeByUri.blocks),
     },
   };
